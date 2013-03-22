@@ -1,5 +1,5 @@
-Barnes2013-FlatSurfaces
-=======================
+Barnes2013-Depressions
+======================
 
 **Title of Manuscript**:
 Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm
@@ -8,6 +8,8 @@ for Digital Elevation Models (TODO: DOI, following publication)
 **Authors**: Richard Barnes, Clarence Lehman, David Mulla
 
 **Corresponding Author**: Richard Barnes (rbarnes@umn.edu)
+
+TODO: The following requires extensive revision as it has simply been copied from the Barnes2013-Flats README.md for use as a template.
 
 This repository contains a reference implementation of the algorithms presented
 in the manuscript above. These implementations were used in performing the
