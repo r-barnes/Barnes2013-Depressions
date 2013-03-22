@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <queue>
 
 template <class T>
 class array2d {
@@ -141,7 +142,7 @@ bool array2d<T>::operator==(const array2d<T> &other) const {
 typedef array2d<double>       double_2d;
 typedef array2d<float>        float_2d;
 typedef array2d<signed char>  char_2d;
-typedef array2d<bool>         bool_2d;
+typedef array2d<char>         bool_2d;
 typedef array2d<unsigned int> uint_2d;
 typedef array2d<int>          int_2d;
 
@@ -155,5 +156,60 @@ typedef struct grid_cell_type {
   /// Initiate the grid cell without coordinates; should generally be avoided
   grid_cell_type(){}
 } grid_cell;
+
+
+
+/// Stores the (x,y,z) coordinates of a grid cell; useful for priority sorting
+/// with \ref grid_cellz_compare
+/// @todo z-coordinate should be templated
+typedef struct grid_cell_typez {
+  int x;        ///< Grid cell's x-coordinate
+  int y;        ///< Grid cell's y-coordinate
+  float z;      ///< Grid cell's z-coordinate
+  grid_cell_typez(int x0, int y0, float z0):x(x0),y(y0),z(z0){}
+  grid_cell_typez(){}
+} grid_cellz;
+
+/// Used for sorting grid cells defined by \struct grid_cell_typez
+/// @todo Should have a T abstraction
+class grid_cellz_compare{
+  bool reverse;
+  public:
+    grid_cellz_compare(const bool& revparam=false){reverse=revparam;}
+    bool operator() (const grid_cellz &lhs, const grid_cellz &rhs) const{
+      if (reverse) return (lhs.z<rhs.z);
+      else return (lhs.z>rhs.z);
+    }
+};
+
+
+
+/// Stores the (x,y,z) coordinates of a grid cell and a priority indicator k;
+/// useful for stable priority sorting with \ref grid_cellzk_compare
+/// @todo z-coordinate should be templated
+typedef struct grid_cell_typezk {
+  int x;          ///< Grid cell's x-coordinate 
+  int y;          ///< Grid cell's y-coordinate 
+  float z;        ///< Grid cell's z-coordinate
+  int k;          ///< Used to store an integer to make sorting stable
+  grid_cell_typezk(int x0, int y0, float z0, int k0):x(x0),y(y0),z(z0),k(k0){}
+  grid_cell_typezk(){}
+} grid_cellzk;
+
+/// Used for stable sorting of grid cells defined by \struct grid_cell_typezk
+class grid_cellzk_compare{
+  bool reverse;
+  public:
+    grid_cellzk_compare(const bool& revparam=false){reverse=revparam;}
+    bool operator() (const grid_cellzk &lhs, const grid_cellzk &rhs) const{
+      if (reverse) return (lhs.z<rhs.z || (lhs.z==rhs.z && lhs.k<rhs.k));
+      else return (lhs.z>rhs.z || (lhs.z==rhs.z && lhs.k>rhs.k));
+    }
+};
+
+
+
+typedef std::priority_queue<grid_cellz, std::vector<grid_cellz>, grid_cellz_compare> grid_cellz_pq;
+typedef std::priority_queue<grid_cellzk, std::vector<grid_cellzk>, grid_cellzk_compare> grid_cellzk_pq;
 
 #endif
