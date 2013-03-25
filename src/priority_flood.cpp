@@ -7,7 +7,7 @@
 #include <sys/time.h>
 
 int main(int argc, char **argv){
-	if(argc!=3){
+	if(argc!=2){
 		printf("%s <INPUT DEM>\n",argv[0]);
 		return -1;
 	}
@@ -21,7 +21,7 @@ int main(int argc, char **argv){
 	int_2d pmask;
   pit_mask(elevations,pmask);
 
-	output_ascii_data(argv[2],pmask,0);
+	output_ascii_data("out_pf",pmask,0);
 
   overall.stop();
   printf("Barnes algorithm took %f seconds overall.\n",overall.accumulated());
