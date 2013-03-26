@@ -169,18 +169,12 @@ class grid_cellz {
     float z;         ///< Grid cell's z-coordinate
     grid_cellz(int x, int y, float z):x(x), y(y), z(z) {}
     grid_cellz(){}
-};
-
-/// Used for sorting grid cells defined by \struct grid_cell_typez
-/// @todo Should have a T abstraction
-class grid_cellz_compare{
-  bool reverse;
-  public:
-    grid_cellz_compare(const bool& revparam=false){reverse=revparam;}
-    bool operator() (const grid_cellz &lhs, const grid_cellz &rhs) const{
-      if (reverse) return (lhs.z<rhs.z);
-      else return (lhs.z>rhs.z);
-    }
+    bool operator< (const grid_cellz& a) const { return z< a.z; }
+    bool operator> (const grid_cellz& a) const { return z> a.z; }
+    bool operator>=(const grid_cellz& a) const { return z>=a.z; }
+    bool operator<=(const grid_cellz& a) const { return z<=a.z; }
+    bool operator==(const grid_cellz& a) const { return z==a.z; }
+    bool operator!=(const grid_cellz& a) const { return !operator==(a); }
 };
 
 
@@ -210,7 +204,7 @@ class grid_cellzk_compare{
 
 
 
-typedef std::priority_queue<grid_cellz, std::vector<grid_cellz>, grid_cellz_compare> grid_cellz_pq;
+typedef std::priority_queue<grid_cellz, std::vector<grid_cellz>, std::greater<grid_cellz> > grid_cellz_pq;
 typedef std::priority_queue<grid_cellzk, std::vector<grid_cellzk>, grid_cellzk_compare> grid_cellzk_pq;
 
 #endif
