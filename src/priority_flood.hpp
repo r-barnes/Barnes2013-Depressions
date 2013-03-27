@@ -235,7 +235,6 @@ void barnes_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   grid_cellzk_pq open;
   bool_2d closed;
   unsigned long processed_cells=0;
-  int cell_num=0;
   ProgressBar progress;
 
   diagnostic("\n###Barnes Flood+Flow Directions\n");
