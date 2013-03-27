@@ -37,14 +37,14 @@ void barnes_priority_flood(array2d<T> &elevations){
   diagnostic_arg("The open priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
   diagnostic("Adding cells to the open priority queue...");
   for(int x=0;x<elevations.width();x++){
-    open.push(grid_cellz(x,0,elevations(x,0) ));
-    open.push(grid_cellz(x,elevations.height()-1,elevations(x,elevations.height()-1) ));
+    open.push_cell(x,0,elevations(x,0) );
+    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
     closed(x,0)=true;
     closed(x,elevations.height()-1)=true;
   }
   for(int y=1;y<elevations.height()-1;y++){
-    open.push(grid_cellz(0,y,elevations(0,y)  ));
-    open.push(grid_cellz(elevations.width()-1,y,elevations(elevations.width()-1,y) ));
+    open.push_cell(0,y,elevations(0,y)  );
+    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
     closed(0,y)=true;
     closed(elevations.width()-1,y)=true;
   }
@@ -78,7 +78,7 @@ void barnes_priority_flood(array2d<T> &elevations){
         }
         meander.push(grid_cellz(nx,ny,c.z));
       } else
-        open.push(grid_cellz(nx,ny,elevations(nx,ny)));
+        open.push_cell(nx,ny,elevations(nx,ny));
     }
     progress.update(processed_cells);
   }
@@ -167,16 +167,16 @@ void barnes_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   diagnostic_arg("The open priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
   diagnostic("Adding cells to the open priority queue...");
   for(int x=0;x<elevations.width();x++){
-    open.push(grid_cellzk(x,0,elevations(x,0),++cell_num ));
-    open.push(grid_cellzk(x,elevations.height()-1,elevations(x,elevations.height()-1), ++cell_num ));
+    open.push_cell(x,0,elevations(x,0));
+    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1));
     flowdirs(x,0)=d8_edge_flow(x,0,elevations,flowdirs);
     flowdirs(x,elevations.height()-1)=d8_edge_flow(x, elevations.height()-1, elevations, flowdirs);
     closed(x,0)=true;
     closed(x,elevations.height()-1)=true;
   }
   for(int y=1;y<elevations.height()-1;y++){
-    open.push(grid_cellzk(0,y,elevations(0,y),++cell_num  ));
-    open.push(grid_cellzk(elevations.width()-1,y,elevations(elevations.width()-1,y), ++cell_num ));
+    open.push_cell(0,y,elevations(0,y) );
+    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
     flowdirs(0,y)=d8_edge_flow(0,y,elevations,flowdirs);
     flowdirs(elevations.width()-1,y)=d8_edge_flow(elevations.width()-1, y, elevations, flowdirs);
     closed(0,y)=true;
@@ -188,7 +188,7 @@ void barnes_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   diagnostic("%%Performing the Barnes Flood+Flow Directions...\n");
   progress.start( elevations.width()*elevations.height() );
   while(open.size()>0){
-    grid_cellzk c=open.top();
+    grid_cellz c=open.top();
     open.pop();
     processed_cells++;
 
@@ -207,7 +207,7 @@ void barnes_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
       else
         flowdirs(nx,ny)=inverse_flow[n];
 
-      open.push(grid_cellzk(nx,ny,elevations(nx,ny),++cell_num));
+      open.push_cell(nx,ny,elevations(nx,ny));
     }
     progress.update(processed_cells);
   }
@@ -257,14 +257,14 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
   diagnostic_arg("The open priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
   diagnostic("Adding cells to the open priority queue...");
   for(int x=0;x<elevations.width();x++){
-    open.push(grid_cellz(x,0,elevations(x,0) ));
-    open.push(grid_cellz(x,elevations.height()-1,elevations(x,elevations.height()-1) ));
+    open.push_cell(x,0,elevations(x,0) );
+    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
     closed(x,0)=true;
     closed(x,elevations.height()-1)=true;
   }
   for(int y=1;y<elevations.height()-1;y++){
-    open.push(grid_cellz(0,y,elevations(0,y)  ));
-    open.push(grid_cellz(elevations.width()-1,y,elevations(elevations.width()-1,y) ));
+    open.push_cell(0,y,elevations(0,y)  );
+    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
     closed(0,y)=true;
     closed(elevations.width()-1,y)=true;
   }
@@ -297,7 +297,7 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
         meander.push(grid_cellz(nx,ny,c.z));
       } else{
         pit_mask(nx,ny)=0;
-        open.push(grid_cellz(nx,ny,elevations(nx,ny)));
+        open.push_cell(nx,ny,elevations(nx,ny));
       }
     }
 
