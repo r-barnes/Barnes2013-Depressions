@@ -35,12 +35,11 @@ int main(int argc, char **argv){
       original_priority_flood(elevations);
       algtimer.stop();
 
+      output_ascii_data("out-pf-original",elevations,8);
+      overall.stop();
+
       cout<<"Algorithm 1: Original Priority-Flood took ";
       cout<<algtimer.accumulated()<<"s to run."<<endl;
-
-      output_ascii_data("out-pf-original",elevations,8);
-
-      overall.stop();
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
     case '2':
@@ -48,12 +47,11 @@ int main(int argc, char **argv){
       improved_priority_flood(elevations);
       algtimer.stop();
 
+      output_ascii_data("out-pf-original",elevations,8);
+      overall.stop();
+
       cout<<"Algorithm 2: Improved Priority-Flood took ";
       cout<<algtimer.accumulated()<<"s to run."<<endl;
-
-      output_ascii_data("out-pf-original",elevations,8);
-
-      overall.stop();
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
     case '3':
@@ -61,12 +59,11 @@ int main(int argc, char **argv){
       priority_flood_epsilon(elevations);
       algtimer.stop();
 
+      output_ascii_data("out-pf-epsilon",elevations,8);
+      overall.stop();
+
       cout<<"Algorithm 3: Priority-Flood+Epsilon took ";
       cout<<algtimer.accumulated()<<"s to run."<<endl;
-
-      output_ascii_data("out-pf-epsilon",elevations,8);
-
-      overall.stop();
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
     case '4':
@@ -74,12 +71,11 @@ int main(int argc, char **argv){
       priority_flood_flowdirs(elevations,flowdirs);
       algtimer.stop();
 
+      output_ascii_data("out-pf-flowdirs",flowdirs,0);
+      overall.stop();
+
       cout<<"Algorithm 4: Priority-Flood+FlowDirs took ";
       cout<<algtimer.accumulated()<<"s to run."<<endl;
-
-      output_ascii_data("out-pf-flowdirs",flowdirs,0);
-
-      overall.stop();
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
     case '5':
@@ -87,12 +83,11 @@ int main(int argc, char **argv){
       priority_flood_watersheds(elevations,pit_mask,false);
       algtimer.stop();
 
+      output_ascii_data("out-pf-wlabels",pit_mask,0);
+      overall.stop();
+
       cout<<"Algorithm 5: Priority-Flood+Watershed Labels took ";
       cout<<algtimer.accumulated()<<"s to run."<<endl;
-
-      output_ascii_data("out-pf-wlabels",pit_mask,0);
-
-      overall.stop();
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
   }
