@@ -76,7 +76,7 @@ void original_priority_flood(array2d<T> &elevations){
 
 
 
-//barnes_priority_flood
+//improved_priority_flood
 /**
   @brief  Fills all pits and removes all digital dams from a DEM
   @author Richard Barnes (rbarnes@umn.edu)
@@ -93,7 +93,7 @@ void original_priority_flood(array2d<T> &elevations){
   @param[in,out]  &elevations   A grid of cell elevations
 */
 template <class T>
-void barnes_priority_flood(array2d<T> &elevations){
+void improved_priority_flood(array2d<T> &elevations){
   grid_cellz_pq open;
   std::queue<grid_cellz> pit;
   bool_2d closed;
