@@ -18,6 +18,15 @@
     they are raised to match its elevation; this fills depressions.
 
   @param[in,out]  &elevations   A grid of cell elevations
+
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+    2. **elevations** contains no landscape depressions or digital dams.
 */
 template <class T>
 void original_priority_flood(array2d<T> &elevations){
@@ -91,6 +100,15 @@ void original_priority_flood(array2d<T> &elevations){
     way, pits are filled without incurring the expense of the priority queue.
 
   @param[in,out]  &elevations   A grid of cell elevations
+
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+    2. **elevations** contains no landscape depressions or digital dams.
 */
 template <class T>
 void improved_priority_flood(array2d<T> &elevations){
@@ -175,6 +193,15 @@ void improved_priority_flood(array2d<T> &elevations){
     way, pits are filled without incurring the expense of the priority queue.
 
   @param[in,out]  &elevations   A grid of cell elevations
+
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+    2. **elevations** has no landscape depressions, digital dams, or flats.
 */
 template <class T>
 void priority_flood_epsilon(array2d<T> &elevations){
@@ -268,7 +295,15 @@ void priority_flood_epsilon(array2d<T> &elevations){
   @param[in]   &elevations  A grid of cell elevations
   @param[out]  &flowdirs    A grid of D8 flow directions
 
-  @post \pname{flowdirs} takes the properties and dimensions of \pname{elevations}
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **flowdirs** contains a D8 flow direction of each cell or a value
+       _NO_FLOW_ for those cells which are not part of the DEM.
+    2. **flowdirs** has no cells which are not part of a continuous flow
+       path leading to the edge of the DEM.
 */
 template <class T>
 void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
@@ -356,7 +391,7 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
 
 //pit_mask
 /**
-  @brief  TODO
+  @brief  Indicates which cells are in pits
   @author Richard Barnes (rbarnes@umn.edu)
 
     This version of Priority-Flood starts on the edges of the DEM and then
@@ -367,6 +402,14 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
 
   @param[in]   &elevations   A grid of cell elevations
   @param[out]  &pit_mask     A grid of indicating which cells are in pits
+
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **pit_mask** contains a 1 for each cell which is in a pit and a 0 for
+       each cell which is not.
 */
 template <class T>
 void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
@@ -466,7 +509,15 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
     had been applied. The result is that all cells drain to the edges of the
     DEM. Otherwise, **elevations** is not altered.
 
-  @post \pname{labels} takes the properties and dimensions of \pname{elevations}
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM.
+
+  @post
+    1. **elevations** contains no depressions or digital dams, if
+       **alter_elevations** was set.
+    2. **labels** contains a label for each cell indicating its membership in a
+       given watershed. Cells bearing common labels drain to common points.
 */
 void priority_flood_watersheds(
   float_2d &elevations, int_2d &labels, bool alter_elevations
