@@ -446,9 +446,9 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
   @param[in,out] elevations        A grid of cell elevations
   @param[out]    labels            A grid to hold the watershed labels
   @param[in]     alter_elevations
-    If true, then \pname{elevations} is altered as though barnes_flood() had
-    been applied. The result is that all cells drain to the edges of the DEM. 
-    Otherwise, \pname{elevations} is not altered.
+    If true, then **elevations** is altered as though improved_priority_flood()
+    had been applied. The result is that all cells drain to the edges of the
+    DEM. Otherwise, **elevations** is not altered.
 
   @post \pname{labels} takes the properties and dimensions of \pname{elevations}
 */
