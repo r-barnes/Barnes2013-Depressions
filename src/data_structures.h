@@ -198,7 +198,7 @@ class grid_cellz_pq : public std::priority_queue<grid_cellz, std::vector<grid_ce
 };
 
 ///A priority queue of grid_cells, sorted by ascending height or, if heights
-///if heights are equal, by the order of insertion
+///are equal, by the order of insertion
 class grid_cellzk_pq : public std::priority_queue<grid_cellzk, std::vector<grid_cellzk>, std::greater<grid_cellzk> > {
   private:
     int count;
