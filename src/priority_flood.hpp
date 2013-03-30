@@ -20,9 +20,8 @@
   @param[in,out]  &elevations   A grid of cell elevations
 */
 template <class T>
-void barnes_priority_flood(array2d<T> &elevations){
+void original_priority_flood(array2d<T> &elevations){
   grid_cellz_pq open;
-  std::queue<grid_cellz> pit;
   bool_2d closed;
   unsigned long processed_cells=0;
   unsigned long pitc=0;
@@ -50,17 +49,11 @@ void barnes_priority_flood(array2d<T> &elevations){
   }
   diagnostic("succeeded.\n");
 
-  diagnostic("%%Performing the Barnes Flood...\n");
+  diagnostic("%%Performing the original Priority Flood...\n");
   progress.start( elevations.width()*elevations.height() );
-  while(open.size()>0 || pit.size()>0){
-    grid_cellz c;
-    if(pit.size()>0){
-      c=pit.front();
-      pit.pop();
-    } else {
-      c=open.top();
-      open.pop();
-    }
+  while(open.size()>0){
+    grid_cellz c=open.top();
+    open.pop();
     processed_cells++;
 
     for(int n=1;n<=8;n++){
@@ -71,14 +64,9 @@ void barnes_priority_flood(array2d<T> &elevations){
         continue;
 
       closed(nx,ny)=true;
-      if(elevations(nx,ny)<=c.z){
-        if(elevations(nx,ny)<c.z){
-          ++pitc;
-          elevations(nx,ny)=c.z;
-        }
-        pit.push(grid_cellz(nx,ny,c.z));
-      } else
-        open.push_cell(nx,ny,elevations(nx,ny));
+      if(elevations(nx,ny)<elevations(c.x,c.y)) ++pitc;
+      elevations(nx,ny)=max(elevations(nx,ny),elevations(c.x,c.y));
+      open.push_cell(nx,ny,elevations(nx,ny));
     }
     progress.update(processed_cells);
   }
