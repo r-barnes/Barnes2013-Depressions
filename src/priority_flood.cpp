@@ -27,7 +27,7 @@ int main(int argc, char **argv){
   int_2d pit_mask;
 
 	float_2d elevations;
-	load_ascii_data(argv[1],elevations);
+	load_ascii_data(argv[2],elevations);
 
   switch(argv[1][0]){
     case '1':
