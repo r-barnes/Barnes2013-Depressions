@@ -443,13 +443,16 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
 
 //priority_flood_watersheds
 /**
-  @brief  Labels watershed drainage areas, working inwards from the edges of the DEM
+  @brief  Gives a common label to all cells which drain to a common point
   @author Richard Barnes (rbarnes@umn.edu)
 
-  Same as #barnes_flood. \pname{labels} starts out as no_data. If it is found
-  that a no_data labels cell coincides with a data_cell in \pname{elevations},
-  then this is the beginning of a new watershed. Cells which are flooded from
-  a labeled cell take on that cell's label
+    All the edge cells of the DEM are given unique labels. This version of
+    Priority-Flood starts on the edges of the DEM and then works its way
+    inwards using a priority queue to determine the lowest cell which has a
+    path to the edge. The neighbours of this cell are then given its label. All
+    depressions are implicitly filled and digital dams removed. The result is
+    a grid of cells where all cells with a common label drain to a common
+    point.
 
   @param[in,out] elevations        A grid of cell elevations
   @param[out]    labels            A grid to hold the watershed labels
