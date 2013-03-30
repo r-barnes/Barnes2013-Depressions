@@ -252,7 +252,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
 
 
 
-//barnes_flood_flowdirs
+//priority_flood_flowdirs
 /**
   @brief  Determines D8 flow directions by flooding inwards, pits are implicitly carved to drainage points. Based on Metz 2011.
   @author Richard Barnes (rbarnes@umn.edu)
@@ -263,7 +263,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
   @post \pname{flowdirs} takes the properties and dimensions of \pname{elevations}
 */
 template <class T>
-void barnes_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
+void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   grid_cellzk_pq open;
   bool_2d closed;
   unsigned long processed_cells=0;
