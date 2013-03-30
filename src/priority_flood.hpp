@@ -254,8 +254,16 @@ void priority_flood_epsilon(array2d<T> &elevations){
 
 //priority_flood_flowdirs
 /**
-  @brief  Determines D8 flow directions by flooding inwards, pits are implicitly carved to drainage points. Based on Metz 2011.
+  @brief  Determines D8 flow directions and implicitly fills pits.
   @author Richard Barnes (rbarnes@umn.edu)
+
+    This version of Priority-Flood starts on the edges of the DEM and then
+    works its way inwards using a priority queue to determine the lowest cell
+    which has a path to the edge. The neighbours of this cell are given D8 flow
+    directions which point to it. All depressions are implicitly filled and
+    digital dams removed.
+
+    Based on Metz 2011.
 
   @param[in]   &elevations  A grid of cell elevations
   @param[out]  &flowdirs    A grid of D8 flow directions
