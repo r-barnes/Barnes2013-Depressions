@@ -65,7 +65,7 @@ void original_priority_flood(array2d<T> &elevations){
 
       closed(nx,ny)=true;
       if(elevations(nx,ny)<elevations(c.x,c.y)) ++pitc;
-      elevations(nx,ny)=max(elevations(nx,ny),elevations(c.x,c.y));
+      elevations(nx,ny)=std::max(elevations(nx,ny),elevations(c.x,c.y));
       open.push_cell(nx,ny,elevations(nx,ny));
     }
     progress.update(processed_cells);
