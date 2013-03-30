@@ -359,9 +359,14 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   @brief  TODO
   @author Richard Barnes (rbarnes@umn.edu)
 
-    TODO
+    This version of Priority-Flood starts on the edges of the DEM and then
+    works its way inwards using a priority queue to determine the lowest cell
+    which has a path to the edge. If a cell is lower than this cell then it is
+    part of a pit and is given a value 1 to indicate this. The result is a grid
+    where every cell which is in a pit is labeled.
 
-  @param[in,out]  &elevations   A grid of cell elevations
+  @param[in]   &elevations   A grid of cell elevations
+  @param[out]  &pit_mask     A grid of indicating which cells are in pits
 */
 template <class T>
 void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
