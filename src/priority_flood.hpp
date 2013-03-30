@@ -433,7 +433,7 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
 
 
 
-//find_watersheds
+//priority_flood_watersheds
 /**
   @brief  Labels watershed drainage areas, working inwards from the edges of the DEM
   @author Richard Barnes (rbarnes@umn.edu)
@@ -452,7 +452,7 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
 
   @post \pname{labels} takes the properties and dimensions of \pname{elevations}
 */
-void find_watersheds(
+void priority_flood_watersheds(
   float_2d &elevations, int_2d &labels, bool alter_elevations
 ){
   grid_cellz_pq open;
