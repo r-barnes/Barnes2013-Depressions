@@ -119,7 +119,7 @@ void improved_priority_flood(array2d<T> &elevations){
   unsigned long pitc=0;
   ProgressBar progress;
 
-  diagnostic("\n###Barnes Flood\n");
+  diagnostic("\n###Improved Priority-Flood\n");
   diagnostic("Setting up boolean flood array matrix...");
   closed.copyprops(elevations);
   closed.init(false);
@@ -141,7 +141,7 @@ void improved_priority_flood(array2d<T> &elevations){
   }
   diagnostic("succeeded.\n");
 
-  diagnostic("%%Performing the Barnes Flood...\n");
+  diagnostic("%%Performing the improved Priority-Flood...\n");
   progress.start( elevations.width()*elevations.height() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
@@ -212,7 +212,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
   unsigned long pitc=0;
   ProgressBar progress;
 
-  diagnostic("\n###Barnes Flood\n");
+  diagnostic("\n###Priority-Flood+Epsilon\n");
   diagnostic("Setting up boolean flood array matrix...");
   closed.copyprops(elevations);
   closed.init(false);
@@ -234,7 +234,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
   }
   diagnostic("succeeded.\n");
 
-  diagnostic("%%Performing the Barnes Flood...\n");
+  diagnostic("%%Performing Priority-Flood+Epsilon...\n");
   progress.start( elevations.width()*elevations.height() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
@@ -312,7 +312,7 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   unsigned long processed_cells=0;
   ProgressBar progress;
 
-  diagnostic("\n###Barnes Flood+Flow Directions\n");
+  diagnostic("\n###Priority-Flood+Flow Directions\n");
   diagnostic("Setting up boolean flood array matrix...");
   closed.copyprops(elevations);
   closed.init(false);
@@ -349,7 +349,7 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
   flowdirs(flowdirs.width()-1,flowdirs.height()-1)=6;
 
   const int d8_order[9]={0,1,3,5,7,2,4,6,8};
-  diagnostic("%%Performing the Barnes Flood+Flow Directions...\n");
+  diagnostic("%%Performing Priority-Flood+Flow Directions...\n");
   progress.start( elevations.width()*elevations.height() );
   while(open.size()>0){
     grid_cellz c=open.top();
@@ -530,7 +530,7 @@ void priority_flood_watersheds(
   int clabel=1;  //TODO: Thought this was more clear than zero in the results.
   ProgressBar progress;
 
-  diagnostic("\n###Barnes Flood+Watershed Labels\n");
+  diagnostic("\n###Priority-Flood+Watershed Labels\n");
   diagnostic("Setting up boolean flood array matrix...");
   closed.copyprops(elevations);
   closed.init(false);
@@ -558,7 +558,7 @@ void priority_flood_watersheds(
   }
   diagnostic("succeeded.\n");
 
-  diagnostic("%%Performing the Barnes Flood+Watershed Labels...\n");
+  diagnostic("%%Performing Priority-Flood+Watershed Labels...\n");
   progress.start( elevations.width()*elevations.height() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
