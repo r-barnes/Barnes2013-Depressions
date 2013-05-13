@@ -211,6 +211,8 @@ void priority_flood_epsilon(array2d<T> &elevations){
   unsigned long processed_cells=0;
   unsigned long pitc=0;
   ProgressBar progress;
+  T PitTop=elevations.no_data;
+  int false_pit_cells=0;
 
   diagnostic("\n###Priority-Flood+Epsilon\n");
   diagnostic("Setting up boolean flood array matrix...");
@@ -241,29 +243,38 @@ void priority_flood_epsilon(array2d<T> &elevations){
     if(pit.size()>0 && open.size()>0 && open.top().z==pit.front().z){
       c=open.top();
       open.pop();
+      PitTop=elevations.no_data;
     } else if(pit.size()>0){
       c=pit.front();
       pit.pop();
+      if(PitTop==elevations.no_data)
+        PitTop=elevations(c.x,c.y);
     } else {
       c=open.top();
       open.pop();
+      PitTop=elevations.no_data;
     }
     processed_cells++;
 
     for(int n=1;n<=8;n++){
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
+
       if(!elevations.in_grid(nx,ny)) continue;
+
       if(closed(nx,ny)) 
         continue;
-
       closed(nx,ny)=true;
-      if(elevations(nx,ny)<nextafterf(c.z,std::numeric_limits<float>::infinity())){
-        if(elevations(nx,ny)<c.z){
-          ++pitc;
-          elevations(nx,ny)=nextafterf(c.z,std::numeric_limits<float>::infinity());
-        }
-        pit.push(grid_cellz(nx,ny,c.z));
+
+      if(elevations(nx,ny)==elevations.no_data)
+        pit.push(grid_cellz(nx,ny,elevations.no_data));
+
+      else if(elevations(nx,ny)<=nextafterf(c.z,std::numeric_limits<float>::infinity())){
+        if(PitTop!=elevations.no_data && PitTop<elevations(nx,ny) && nextafterf(c.z,std::numeric_limits<float>::infinity())>=elevations(nx,ny))
+          ++false_pit_cells;
+        ++pitc;
+        elevations(nx,ny)=nextafterf(c.z,std::numeric_limits<float>::infinity());
+        pit.push(grid_cellz(nx,ny,elevations(nx,ny)));
       } else
         open.push_cell(nx,ny,elevations(nx,ny));
     }
@@ -271,8 +282,9 @@ void priority_flood_epsilon(array2d<T> &elevations){
   }
   diagnostic_arg(SUCCEEDED_IN,progress.stop());
   diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
+  if(false_pit_cells)
+    diagnostic_arg("\033[91mIn assigning negligible gradients to depressions, some depressions rose above the surrounding cells. This implies that a large storage type should be used. The problem occured for %d of %ld cells.\033[39m\n",false_pit_cells,elevations.data_cells);
 }
-
 
 
 
