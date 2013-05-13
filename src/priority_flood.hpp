@@ -283,7 +283,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
   diagnostic_arg(SUCCEEDED_IN,progress.stop());
   diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
   if(false_pit_cells)
-    diagnostic_arg("\033[91mIn assigning negligible gradients to depressions, some depressions rose above the surrounding cells. This implies that a large storage type should be used. The problem occured for %d of %ld cells.\033[39m\n",false_pit_cells,elevations.data_cells);
+    diagnostic_arg("\033[91mIn assigning negligible gradients to depressions, some depressions rose above the surrounding cells. This implies that a larger storage type should be used. The problem occured for %d of %ld cells.\033[39m\n",false_pit_cells,elevations.data_cells);
 }
 
 
