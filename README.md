@@ -10,7 +10,7 @@ for Digital Elevation Models (TODO: DOI, following publication)
 **Corresponding Author**: Richard Barnes (rbarnes@umn.edu)
 
 **DOI Number of Manuscript**
-[10.1016/j.cageo.2013.04.024 ](http://dx.doi.org/10.1016/j.cageo.2013.04.024)
+[10.1016/j.cageo.2013.04.024](http://dx.doi.org/10.1016/j.cageo.2013.04.024)
 
 **Code Repositories**
  * [Author's GitHub Repository](https://github.com/r-barnes/Barnes2013-Depressions)
