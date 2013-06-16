@@ -3,7 +3,7 @@ Barnes2013-Depressions
 
 **Title of Manuscript**:
 Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm
-for Digital Elevation Models (TODO: DOI, following publication)
+for Digital Elevation Models
 
 **Authors**: Richard Barnes, Clarence Lehman, David Mulla
 
