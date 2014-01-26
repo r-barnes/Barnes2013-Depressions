@@ -82,3 +82,10 @@ The directory **src/** contains the source code for the reference
 implementations. All the source code is drawn from the RichDEM hydroanalysis
 package. At the time of writing, the entire RichDEM code base could be
 downloaded from: [https://github.com/r-barnes](https://github.com/r-barnes)
+
+
+Notes on the Manuscript
+=======================
+Work by Cris Luengo on the speed of various priority queue algorithms is
+discussed in the manuscript. His website providing code for his
+implementatations is [here](http://www.cb.uu.se/~cris/priorityqueues.html).
