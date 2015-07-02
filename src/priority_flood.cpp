@@ -47,7 +47,7 @@ int main(int argc, char **argv){
       improved_priority_flood(elevations);
       algtimer.stop();
 
-      output_ascii_data("out-pf-original",elevations,8);
+      output_ascii_data("out-pf-improved",elevations,8);
       overall.stop();
 
       cout<<"Algorithm 2: Improved Priority-Flood took ";
