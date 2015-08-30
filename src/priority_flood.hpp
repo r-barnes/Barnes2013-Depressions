@@ -69,7 +69,7 @@ void original_priority_flood(array2d<T> &elevations){
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
       if(!elevations.in_grid(nx,ny)) continue;
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
 
       closed(nx,ny)=true;
@@ -158,7 +158,7 @@ void improved_priority_flood(array2d<T> &elevations){
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
       if(!elevations.in_grid(nx,ny)) continue;
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
 
       closed(nx,ny)=true;
@@ -262,7 +262,7 @@ void priority_flood_epsilon(array2d<T> &elevations){
 
       if(!elevations.in_grid(nx,ny)) continue;
 
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
       closed(nx,ny)=true;
 
@@ -373,7 +373,7 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
       if(!elevations.in_grid(nx,ny)) continue;
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
 
       closed(nx,ny)=true;
@@ -476,7 +476,7 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
       if(!elevations.in_grid(nx,ny)) continue;
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
 
       closed(nx,ny)=true;
@@ -548,7 +548,7 @@ void priority_flood_watersheds(
   closed.init(false);
   diagnostic("succeeded.\n");
 
-  diagnostic("Setting up boolean flood array matrix...");
+  diagnostic("Setting up watershed label matrix...");
   labels.copyprops(elevations);
   labels.no_data=-1;
   labels.init(labels.no_data);
@@ -592,7 +592,7 @@ void priority_flood_watersheds(
       int nx=c.x+dx[n];
       int ny=c.y+dy[n];
       if(!elevations.in_grid(nx,ny)) continue;
-      if(closed(nx,ny)) 
+      if(closed(nx,ny))
         continue;
 
       labels(nx,ny)=labels(c.x,c.y);
