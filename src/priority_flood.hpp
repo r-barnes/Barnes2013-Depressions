@@ -585,6 +585,10 @@ void priority_flood_watersheds(
     }
     processed_cells++;
 
+    //Since all interior cells will be flowing into a cell which has already
+    //been processed, the following line identifies only the edge cells of the
+    //DEM. Each edge cell seeds its own watershed/basin. The result of this will
+    //be many small watersheds/basins around the edge of the DEM.
     if(labels(c.x,c.y)==labels.no_data && elevations(c.x,c.y)!=elevations.no_data)  //Implies a cell without a label which borders the edge of the DEM or a region of no_data
       labels(c.x,c.y)=clabel++;
 
@@ -595,6 +599,8 @@ void priority_flood_watersheds(
       if(closed(nx,ny))
         continue;
 
+      //Since the neighbouring cell is not closed, its flow is directed to this
+      //cell. Therefore, it is part of the same watershed/basin as this cell.
       labels(nx,ny)=labels(c.x,c.y);
 
       closed(nx,ny)=true;
