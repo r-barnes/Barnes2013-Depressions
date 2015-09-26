@@ -1,8 +1,8 @@
 CC = g++
-CFLAGS = -O3
+CFLAGS = -O3 --std=c++11
 
 default:
-	$(CC) $(CFLAGS) priority_flood.cpp data_io.cpp -o priority_flood.exe
+	$(CC) $(CFLAGS) -o priority_flood.exe -O3 `gdal-config --cflags` `gdal-config --libs` priority_flood.cpp -lgdal --std=c++11 -Wall
 
 clean:
 	rm -f *exe

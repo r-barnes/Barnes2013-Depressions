@@ -1,8 +1,11 @@
 #ifndef pit_fill_include
 #define pit_fill_include
+#include "Array2D.hpp"
 #include "data_structures.h"
 #include <queue>
 #include <limits>
+#include <iostream>
+#include <cstdlib> //Used for exit
 
 
 
@@ -28,38 +31,39 @@
        for cells not part of the DEM.
     2. **elevations** contains no landscape depressions or digital dams.
 */
-template <class T>
-void original_priority_flood(array2d<T> &elevations){
+template <class elev_t>
+void original_priority_flood(Array2D<elev_t> &elevations){
   grid_cellz_pq open;
-  bool_2d closed;
   unsigned long processed_cells=0;
   unsigned long pitc=0;
   ProgressBar progress;
 
-  diagnostic("\n###Barnes Flood\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Barnes Flood"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"MB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::endl;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("%%Performing the original Priority Flood...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing the original Priority Flood..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0){
     grid_cellz c=open.top();
     open.pop();
@@ -79,8 +83,8 @@ void original_priority_flood(array2d<T> &elevations){
     }
     progress.update(processed_cells);
   }
-  diagnostic_arg(SUCCEEDED_IN,progress.stop());
-  diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+  std::cerr<<processed_cells<<" cells processed. "<<pitc<<" in pits."<<std::endl;
 }
 
 
@@ -110,39 +114,40 @@ void original_priority_flood(array2d<T> &elevations){
        for cells not part of the DEM.
     2. **elevations** contains no landscape depressions or digital dams.
 */
-template <class T>
-void improved_priority_flood(array2d<T> &elevations){
+template <class elev_t>
+void improved_priority_flood(Array2D<elev_t> &elevations){
   grid_cellz_pq open;
   std::queue<grid_cellz> pit;
-  bool_2d closed;
   unsigned long processed_cells=0;
   unsigned long pitc=0;
   ProgressBar progress;
 
-  diagnostic("\n###Improved Priority-Flood\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Improved Priority-Flood"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"%ldMB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::flush;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("%%Performing the improved Priority-Flood...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing the improved Priority-Flood..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
     if(pit.size()>0){
@@ -173,8 +178,8 @@ void improved_priority_flood(array2d<T> &elevations){
     }
     progress.update(processed_cells);
   }
-  diagnostic_arg(SUCCEEDED_IN,progress.stop());
-  diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+  std::cerr<<processed_cells<<" cells processed. "<<pitc<<" in pits."<<std::endl;
 }
 
 
@@ -203,56 +208,57 @@ void improved_priority_flood(array2d<T> &elevations){
        for cells not part of the DEM.
     2. **elevations** has no landscape depressions, digital dams, or flats.
 */
-template <class T>
-void priority_flood_epsilon(array2d<T> &elevations){
+template <class elev_t>
+void priority_flood_epsilon(Array2D<elev_t> &elevations){
   grid_cellz_pq open;
   std::queue<grid_cellz> pit;
-  bool_2d closed;
-  unsigned long processed_cells=0;
-  unsigned long pitc=0;
   ProgressBar progress;
-  T PitTop=elevations.no_data;
-  int false_pit_cells=0;
+  unsigned long processed_cells = 0;
+  unsigned long pitc            = 0;
+  auto PitTop                   = elevations.noData();
+  int false_pit_cells           = 0;
 
-  diagnostic("\n###Priority-Flood+Epsilon\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Priority-Flood+Epsilon"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"%ldMB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::flush;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("%%Performing Priority-Flood+Epsilon...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing Priority-Flood+Epsilon..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
     if(pit.size()>0 && open.size()>0 && open.top().z==pit.front().z){
       c=open.top();
       open.pop();
-      PitTop=elevations.no_data;
+      PitTop=elevations.noData();
     } else if(pit.size()>0){
       c=pit.front();
       pit.pop();
-      if(PitTop==elevations.no_data)
+      if(PitTop==elevations.noData())
         PitTop=elevations(c.x,c.y);
     } else {
       c=open.top();
       open.pop();
-      PitTop=elevations.no_data;
+      PitTop=elevations.noData();
     }
     processed_cells++;
 
@@ -266,11 +272,11 @@ void priority_flood_epsilon(array2d<T> &elevations){
         continue;
       closed(nx,ny)=true;
 
-      if(elevations(nx,ny)==elevations.no_data)
-        pit.push(grid_cellz(nx,ny,elevations.no_data));
+      if(elevations(nx,ny)==elevations.noData())
+        pit.push(grid_cellz(nx,ny,elevations.noData()));
 
       else if(elevations(nx,ny)<=nextafterf(c.z,std::numeric_limits<float>::infinity())){
-        if(PitTop!=elevations.no_data && PitTop<elevations(nx,ny) && nextafterf(c.z,std::numeric_limits<float>::infinity())>=elevations(nx,ny))
+        if(PitTop!=elevations.noData() && PitTop<elevations(nx,ny) && nextafterf(c.z,std::numeric_limits<float>::infinity())>=elevations(nx,ny))
           ++false_pit_cells;
         ++pitc;
         elevations(nx,ny)=nextafterf(c.z,std::numeric_limits<float>::infinity());
@@ -280,15 +286,42 @@ void priority_flood_epsilon(array2d<T> &elevations){
     }
     progress.update(processed_cells);
   }
-  diagnostic_arg(SUCCEEDED_IN,progress.stop());
-  diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+  std::cerr<<processed_cells<<" cells processed. "<<pitc<<" in pits."<<std::endl;
   if(false_pit_cells)
-    diagnostic_arg("\033[91mIn assigning negligible gradients to depressions, some depressions rose above the surrounding cells. This implies that a larger storage type should be used. The problem occured for %d of %ld cells.\033[39m\n",false_pit_cells,elevations.data_cells);
+    std::cerr<<"\033[91mIn assigning negligible gradients to depressions, some depressions rose above the surrounding cells. This implies that a larger storage type should be used. The problem occured for "<<false_pit_cells<<" of "<<elevations.numDataCells()<<std::endl;
 }
 
 
+template<>
+void priority_flood_epsilon(Array2D<uint8_t> &elevations){
+  std::cerr<<"Priority-Flood+Epsilon is only available for floating-point data types!"<<std::endl;
+  exit(-1);
+}
 
+template<>
+void priority_flood_epsilon(Array2D<uint16_t> &elevations){
+  std::cerr<<"Priority-Flood+Epsilon is only available for floating-point data types!"<<std::endl;
+  exit(-1);
+}
 
+template<>
+void priority_flood_epsilon(Array2D<int16_t> &elevations){
+  std::cerr<<"Priority-Flood+Epsilon is only available for floating-point data types!"<<std::endl;
+  exit(-1);
+}
+
+template<>
+void priority_flood_epsilon(Array2D<uint32_t> &elevations){
+  std::cerr<<"Priority-Flood+Epsilon is only available for floating-point data types!"<<std::endl;
+  exit(-1);
+}
+
+template<>
+void priority_flood_epsilon(Array2D<int32_t> &elevations){
+  std::cerr<<"Priority-Flood+Epsilon is only available for floating-point data types!"<<std::endl;
+  exit(-1);
+}
 
 
 //priority_flood_flowdirs
@@ -317,52 +350,54 @@ void priority_flood_epsilon(array2d<T> &elevations){
     2. **flowdirs** has no cells which are not part of a continuous flow
        path leading to the edge of the DEM.
 */
-template <class T>
-void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
+template <class elev_t>
+void priority_flood_flowdirs(const Array2D<elev_t> &elevations, Array2D<int8_t> &flowdirs){
   grid_cellzk_pq open;
-  bool_2d closed;
   unsigned long processed_cells=0;
   ProgressBar progress;
 
-  diagnostic("\n###Priority-Flood+Flow Directions\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Priority-Flood+Flow Directions"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("Setting up the flowdirs matrix...");
-  flowdirs.copyprops(elevations);
-  flowdirs.no_data=NO_FLOW;
-  diagnostic("succeeded.\n");
+  std::cerr<<"Setting up the flowdirs matrix..."<<std::flush;  
+  flowdirs.resize(elevations.viewWidth(),elevations.viewHeight());
+  flowdirs.setNoData(NO_FLOW);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"%ldMB of RAM."
+           <<std::endl;
+
+  std::cerr<<"Adding cells to the priority queue..."<<std::endl;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0));
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1));
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1));
     flowdirs(x,0)=3;
-    flowdirs(x,elevations.height()-1)=7;
+    flowdirs(x,elevations.viewHeight()-1)=7;
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y) );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     flowdirs(0,y)=1;
-    flowdirs(elevations.width()-1,y)=5;
+    flowdirs(elevations.viewWidth()-1,y)=5;
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
   flowdirs(0,0)=2;
-  flowdirs(flowdirs.width()-1,0)=4;
-  flowdirs(0,flowdirs.height()-1)=8;
-  flowdirs(flowdirs.width()-1,flowdirs.height()-1)=6;
+  flowdirs(flowdirs.viewWidth()-1,0)=4;
+  flowdirs(0,flowdirs.viewHeight()-1)=8;
+  flowdirs(flowdirs.viewWidth()-1,flowdirs.viewHeight()-1)=6;
 
   const int d8_order[9]={0,1,3,5,7,2,4,6,8};
-  diagnostic("%%Performing Priority-Flood+Flow Directions...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing Priority-Flood+Flow Directions..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0){
     grid_cellz c=open.top();
     open.pop();
@@ -378,8 +413,8 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
 
       closed(nx,ny)=true;
 
-      if(elevations(nx,ny)==elevations.no_data)
-        flowdirs(nx,ny)=flowdirs.no_data;
+      if(elevations(nx,ny)==elevations.noData())
+        flowdirs(nx,ny)=flowdirs.noData();
       else
         flowdirs(nx,ny)=inverse_flow[n];
 
@@ -387,8 +422,8 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
     }
     progress.update(processed_cells);
   }
-  diagnostic_arg(SUCCEEDED_IN,progress.stop());
-  diagnostic_arg("%ld cells processed.\n",processed_cells);
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+  std::cerr<<processed_cells<<" cells processed."<<std::endl;
 }
 
 
@@ -423,44 +458,45 @@ void priority_flood_flowdirs(const array2d<T> &elevations, char_2d &flowdirs){
     1. **pit_mask** contains a 1 for each cell which is in a pit and a 0 for
        each cell which is not.
 */
-template <class T>
-void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
+template <class elev_t>
+void pit_mask(const Array2D<elev_t> &elevations, Array2D<int32_t> &pit_mask){
   grid_cellz_pq open;
   std::queue<grid_cellz> pit;
-  bool_2d closed;
   unsigned long processed_cells=0;
   unsigned long pitc=0;
   ProgressBar progress;
 
-  diagnostic("\n###Pit Mask\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Pit Mask"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("Setting up the pit mask matrix...");
-  pit_mask.copyprops(elevations);
-  pit_mask.no_data=3;
-  diagnostic("succeeded.\n");
+  std::cerr<<"Setting up the pit mask matrix..."<<std::endl;
+  pit_mask.resize(elevations.viewWidth(),elevations.viewHeight());
+  pit_mask.setNoData(3);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"%ldMB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::flush;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("%%Performing the pit mask...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing the pit mask..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
     if(pit.size()>0){
@@ -490,13 +526,13 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
       }
     }
 
-    if(elevations(c.x,c.y)==elevations.no_data)
-      pit_mask(c.x,c.y)=pit_mask.no_data;
+    if(elevations(c.x,c.y)==elevations.noData())
+      pit_mask(c.x,c.y)=pit_mask.noData();
 
     progress.update(processed_cells);
   }
-  diagnostic_arg(SUCCEEDED_IN,progress.stop());
-  diagnostic_arg("%ld cells processed. %ld in pits.\n",processed_cells,pitc);
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+  std::cerr<<processed_cells<<" cells processed. "<<pitc<<" in pits."<<std::endl;
 }
 
 
@@ -531,47 +567,48 @@ void pit_mask(const array2d<T> &elevations, int_2d &pit_mask){
     2. **labels** contains a label for each cell indicating its membership in a
        given watershed. Cells bearing common labels drain to common points.
 */
+template<class elev_t>
 void priority_flood_watersheds(
-  float_2d &elevations, int_2d &labels, bool alter_elevations
+  Array2D<elev_t> &elevations, Array2D<int32_t> &labels, bool alter_elevations
 ){
   grid_cellz_pq open;
   std::queue<grid_cellz> pit;
-  bool_2d closed;
   unsigned long processed_cells=0;
   unsigned long pitc=0,openc=0;
   int clabel=1;  //TODO: Thought this was more clear than zero in the results.
   ProgressBar progress;
 
-  diagnostic("\n###Priority-Flood+Watershed Labels\n");
-  diagnostic("Setting up boolean flood array matrix...");
-  closed.copyprops(elevations);
-  closed.init(false);
-  diagnostic("succeeded.\n");
+  std::cerr<<"\n###Priority-Flood+Watershed Labels"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int8_t> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("Setting up watershed label matrix...");
-  labels.copyprops(elevations);
-  labels.no_data=-1;
-  labels.init(labels.no_data);
-  diagnostic("succeeded.\n");
+  std::cerr<<"Setting up watershed label matrix..."<<std::flush;
+  labels.resize(elevations.viewWidth(),elevations.viewHeight(),-1);
+  labels.setNoData(-1);
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic_arg("The priority queue will require approximately %ldMB of RAM.\n",(elevations.width()*2+elevations.height()*2)*((long)sizeof(grid_cellz))/1024/1024);
-  diagnostic("Adding cells to the priority queue...");
-  for(int x=0;x<elevations.width();x++){
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
+           <<"%ldMB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::endl;
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
-    open.push_cell(x,elevations.height()-1,elevations(x,elevations.height()-1) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
-    closed(x,elevations.height()-1)=true;
+    closed(x,elevations.viewHeight()-1)=true;
   }
-  for(int y=1;y<elevations.height()-1;y++){
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
-    open.push_cell(elevations.width()-1,y,elevations(elevations.width()-1,y) );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
-    closed(elevations.width()-1,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
   }
-  diagnostic("succeeded.\n");
+  std::cerr<<"succeeded."<<std::endl;
 
-  diagnostic("%%Performing Priority-Flood+Watershed Labels...\n");
-  progress.start( elevations.width()*elevations.height() );
+  std::cerr<<"%%Performing Priority-Flood+Watershed Labels..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
   while(open.size()>0 || pit.size()>0){
     grid_cellz c;
     if(pit.size()>0){
@@ -589,7 +626,7 @@ void priority_flood_watersheds(
     //been processed, the following line identifies only the edge cells of the
     //DEM. Each edge cell seeds its own watershed/basin. The result of this will
     //be many small watersheds/basins around the edge of the DEM.
-    if(labels(c.x,c.y)==labels.no_data && elevations(c.x,c.y)!=elevations.no_data)  //Implies a cell without a label which borders the edge of the DEM or a region of no_data
+    if(labels(c.x,c.y)==labels.noData() && elevations(c.x,c.y)!=elevations.noData())  //Implies a cell without a label which borders the edge of the DEM or a region of no_data
       labels(c.x,c.y)=clabel++;
 
     for(int n=1;n<=8;n++){
@@ -613,11 +650,13 @@ void priority_flood_watersheds(
     }
     progress.update(processed_cells);
   }
-  diagnostic_arg("\t\033[96msucceeded in %.2lfs\033[39m\n",progress.stop());
-  diagnostic_arg(
-    "%ld cells processed. %ld in pits, %ld not in pits.\n",
-    processed_cells,pitc,openc
-  );
+
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+
+  std::cerr<<processed_cells<<" cells processed. "
+           <<pitc           <<" in pits, "
+           <<openc          <<" not in pits."
+           <<std::endl;
 }
 
 
