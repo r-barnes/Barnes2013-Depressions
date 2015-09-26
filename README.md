@@ -89,3 +89,18 @@ Notes on the Manuscript
 Work by Cris Luengo on the speed of various priority queue algorithms is
 discussed in the manuscript. His website providing code for his
 implementatations is [here](http://www.cb.uu.se/~cris/priorityqueues.html).
+
+Updates
+=======================
+Commit **51f9a7838d3e88628ef6c74846edd0cb18e7ffe6** (02015-09-25) introduced a
+number of changes to the code versus what was originally published with the
+manuscript. The old codebase uses ASCII-formatted data for input and output.
+
+This had the advantage of not relying on external libraries and being readily
+accessible to all parties. It had the disadvantage of being a slow, clumsy, and
+limited way to work with the data. As of 02015-09-25, the code requires the use
+of the GDAL library greatly expanding the data formats and data types which can
+be worked with, as well as greatly speeding up I/O.
+
+Additionally, the library now uses C++ for all streaming operations except the
+progress bar.
