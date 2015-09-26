@@ -129,7 +129,7 @@ void improved_priority_flood(Array2D<elev_t> &elevations){
 
   std::cerr<<"The priority queue will require approximately "
            <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
-           <<"%ldMB of RAM."
+           <<"MB of RAM."
            <<std::endl;
   std::cerr<<"Adding cells to the priority queue..."<<std::flush;
   for(int x=0;x<elevations.viewWidth();x++){
@@ -225,7 +225,7 @@ void priority_flood_epsilon(Array2D<elev_t> &elevations){
 
   std::cerr<<"The priority queue will require approximately "
            <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
-           <<"%ldMB of RAM."
+           <<"MB of RAM."
            <<std::endl;
   std::cerr<<"Adding cells to the priority queue..."<<std::flush;
   for(int x=0;x<elevations.viewWidth();x++){
@@ -368,7 +368,7 @@ void priority_flood_flowdirs(const Array2D<elev_t> &elevations, Array2D<int8_t> 
 
   std::cerr<<"The priority queue will require approximately "
            <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
-           <<"%ldMB of RAM."
+           <<"MB of RAM."
            <<std::endl;
 
   std::cerr<<"Adding cells to the priority queue..."<<std::endl;
@@ -478,7 +478,7 @@ void pit_mask(const Array2D<elev_t> &elevations, Array2D<int32_t> &pit_mask){
 
   std::cerr<<"The priority queue will require approximately "
            <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
-           <<"%ldMB of RAM."
+           <<"MB of RAM."
            <<std::endl;
   std::cerr<<"Adding cells to the priority queue..."<<std::flush;
   for(int x=0;x<elevations.viewWidth();x++){
@@ -590,7 +590,7 @@ void priority_flood_watersheds(
 
   std::cerr<<"The priority queue will require approximately "
            <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz))/1024/1024
-           <<"%ldMB of RAM."
+           <<"MB of RAM."
            <<std::endl;
   std::cerr<<"Adding cells to the priority queue..."<<std::endl;
   for(int x=0;x<elevations.viewWidth();x++){
