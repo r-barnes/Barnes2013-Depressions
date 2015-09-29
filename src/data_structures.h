@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <cmath>
 
 /// Stores the (x,y) coordinates of a grid cell
 class grid_cell {
@@ -28,35 +29,33 @@ class grid_cell {
 
 
 /// Stores the (x,y,z) coordinates of a grid cell; useful for priority sorting
-/// with \ref grid_cellz_compare. Remember, NaN!=NaN, so this can be used as a 
-/// test for NaN.
+/// with \ref grid_cellz_compare.
 template<class elev_t>
 class grid_cellz : public grid_cell {
   public:
     elev_t z;         ///< Grid cell's z-coordinate
     grid_cellz(int x, int y, elev_t z): grid_cell(x,y), z(z) {}
     grid_cellz(){}
-    bool operator< (const grid_cellz& a) const { return (z!=z && a.z==a.z) || z< a.z; }
-    bool operator> (const grid_cellz& a) const { return (z==z && a.z!=a.z) || z> a.z; }
-    bool operator>=(const grid_cellz& a) const { return (z!=z && a.z!=a.z) || z>=a.z; }
-    bool operator<=(const grid_cellz& a) const { return (z!=z && a.z!=a.z) || z<=a.z; }
-    bool operator==(const grid_cellz& a) const { return (z!=z && a.z!=a.z) || z==a.z; }
-    bool operator!=(const grid_cellz& a) const { return !(z!=z && a.z!=a.z) && z!=a.z; }
+    bool operator< (const grid_cellz& a) const { return ( isnan(z) && !isnan(a.z)) || z< a.z; }
+    bool operator> (const grid_cellz& a) const { return (!isnan(z) &&  isnan(a.z)) || z> a.z; }
+    bool operator>=(const grid_cellz& a) const { return ( isnan(z) &&  isnan(a.z)) || (!isnan(z) &&  isnan(a.z)) || z>=a.z; }
+    bool operator<=(const grid_cellz& a) const { return ( isnan(z) &&  isnan(a.z)) || ( isnan(z) && !isnan(a.z)) || z<=a.z; }
+    bool operator==(const grid_cellz& a) const { return ( isnan(z) &&  isnan(a.z)) || z==a.z; }
+    bool operator!=(const grid_cellz& a) const { return !(isnan(z) &&  isnan(a.z)) && z!=a.z; }
 };
 
 
 
 /// Stores the (x,y,z) coordinates of a grid cell and a priority indicator k;
-/// used by grid_cellz_pq. Remember, NaN!=NaN, so this can be used as a test for
-/// NaN.
+/// used by grid_cellz_pq.
 template<class elev_t>
 class grid_cellzk : public grid_cellz<elev_t> {
   public:
     int k;           ///< Used to store an integer to make sorting stable
     grid_cellzk(int x, int y, elev_t z, int k): grid_cellz<elev_t>(x,y,z), k(k) {}
     grid_cellzk(){}
-    bool operator< (const grid_cellzk<elev_t>& a) const { return grid_cellz<elev_t>::z< a.z || (grid_cellz<elev_t>::z!=grid_cellz<elev_t>::z && a.z==a.z) || (grid_cellz<elev_t>::z==a.z && k<a.k) || (grid_cellz<elev_t>::z!=grid_cellz<elev_t>::z && a.z!=a.z && k<a.k); }
-    bool operator> (const grid_cellzk<elev_t>& a) const { return grid_cellz<elev_t>::z> a.z || (grid_cellz<elev_t>::z==grid_cellz<elev_t>::z && a.z!=a.z) || (grid_cellz<elev_t>::z==a.z && k>a.k) || (grid_cellz<elev_t>::z!=grid_cellz<elev_t>::z && a.z!=a.z && k>a.k); }
+    bool operator< (const grid_cellzk<elev_t>& a) const { return grid_cellz<elev_t>::z< a.z || ( isnan(grid_cellz<elev_t>::z) && !isnan(a.z)) || (grid_cellz<elev_t>::z==a.z && k<a.k) || (isnan(grid_cellz<elev_t>::z) && isnan(a.z) && k<a.k); }
+    bool operator> (const grid_cellzk<elev_t>& a) const { return grid_cellz<elev_t>::z> a.z || (!isnan(grid_cellz<elev_t>::z) &&  isnan(a.z)) || (grid_cellz<elev_t>::z==a.z && k>a.k) || (isnan(grid_cellz<elev_t>::z) && isnan(a.z) && k>a.k); }
 };
 
 ///A priority queue of grid_cells, sorted by ascending height
