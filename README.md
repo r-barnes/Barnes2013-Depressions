@@ -85,7 +85,9 @@ downloaded from: [https://github.com/r-barnes](https://github.com/r-barnes)
 
 Assumptions
 =======================
-All of the algorithms assume that cells marked as having NoData will have extremely negative numerical values: less than any
+All of the algorithms assume that cells marked as having NoData will have
+extremely negative numerical values: less than the value of any of the actual
+data.
 
 Notes on the Manuscript
 =======================

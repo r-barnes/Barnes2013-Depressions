@@ -24,7 +24,8 @@
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **elevations** contains the elevations of every cell or a value _NoData_
@@ -107,7 +108,8 @@ void original_priority_flood(Array2D<elev_t> &elevations){
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **elevations** contains the elevations of every cell or a value _NoData_
@@ -201,7 +203,8 @@ void improved_priority_flood(Array2D<elev_t> &elevations){
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **elevations** contains the elevations of every cell or a value _NoData_
@@ -342,7 +345,8 @@ void priority_flood_epsilon(Array2D<int32_t> &elevations){
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **flowdirs** contains a D8 flow direction of each cell or a value
@@ -452,7 +456,8 @@ void priority_flood_flowdirs(const Array2D<elev_t> &elevations, Array2D<int8_t> 
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **pit_mask** contains a 1 for each cell which is in a pit and a 0 for
@@ -559,7 +564,8 @@ void pit_mask(const Array2D<elev_t> &elevations, Array2D<int32_t> &pit_mask){
 
   @pre
     1. **elevations** contains the elevations of every cell or a value _NoData_
-       for cells not part of the DEM.
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
 
   @post
     1. **elevations** contains no depressions or digital dams, if
