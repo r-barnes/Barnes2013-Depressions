@@ -83,6 +83,9 @@ implementations. All the source code is drawn from the RichDEM hydroanalysis
 package. At the time of writing, the entire RichDEM code base could be
 downloaded from: [https://github.com/r-barnes](https://github.com/r-barnes)
 
+Assumptions
+=======================
+All of the algorithms assume that cells marked as having NoData will have extremely negative numerical values: less than any
 
 Notes on the Manuscript
 =======================
@@ -94,13 +97,18 @@ Updates
 =======================
 Commit **51f9a7838d3e88628ef6c74846edd0cb18e7ffe6** (02015-09-25) introduced a
 number of changes to the code versus what was originally published with the
-manuscript. The old codebase uses ASCII-formatted data for input and output.
+manuscript. The old codebase uses ASCII-formatted data for input and output; the
+new codebase uses GDAL to handle many kinds of data.
 
-This had the advantage of not relying on external libraries and being readily
-accessible to all parties. It had the disadvantage of being a slow, clumsy, and
-limited way to work with the data. As of 02015-09-25, the code requires the use
-of the GDAL library greatly expanding the data formats and data types which can
-be worked with, as well as greatly speeding up I/O.
+The old codebase had the advantage of not relying on external libraries and
+being readily accessible to all parties. It had the disadvantage of being a
+slow, clumsy, and limited way to work with the data. As of 02015-09-25, the code
+requires the use of the GDAL library greatly expanding the data formats and data
+types which can be worked with, as well as greatly speeding up I/O.
+
+Note that using the aforementioned **51f9a7838d** directly will result in silent
+casting of your data to the `float` type; commit
+**8b11f535af23368d3bd26609cc88df3dbb7111f1** (02015-09-28) fixes this issue.
 
 Additionally, the library now uses C++ for all streaming operations except the
 progress bar.
