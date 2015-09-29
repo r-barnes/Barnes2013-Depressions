@@ -87,7 +87,7 @@ Assumptions
 =======================
 All of the algorithms assume that cells marked as having NoData will have
 extremely negative numerical values: less than the value of any of the actual
-data.
+data. NaN is considered to be less than all values, including negative infinity.
 
 Notes on the Manuscript
 =======================
