@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 #Used to save test surfaces to files that ArcGRID files which GDAL can read
 def writeArrayToArcGrid(filename,arr):
@@ -12,6 +13,11 @@ def writeArrayToArcGrid(filename,arr):
   fout.write(headerstring)
   np.savetxt(fout,arr,'%5.5f')
 
+if len(sys.argv)!=2:
+  print("Syntax: {0} <show/noshow>".format(sys.argv[0]))
+  print("\tshow   = Show surfaces as they are generated")
+  print("\tnoshow = Don't show surfaces")
+
 #Generate test surface z(x,y) = sin(x cos(y))
 x = np.linspace(-3, 3, 50)
 y = np.linspace(-3, 3, 50)
@@ -19,7 +25,8 @@ xx, yy = np.meshgrid(x, y)
 z = np.sin(xx*np.cos(yy))
 
 #Show test surface
-plt.contourf(x,y,z)
-plt.show()
+if sys.argv[1]=="show":
+  plt.contourf(x,y,z)
+  plt.show()
 
 writeArrayToArcGrid("./sin-x-cos-y.asc", z)
