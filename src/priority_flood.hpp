@@ -6,7 +6,7 @@
 #include <limits>
 #include <iostream>
 #include <cstdlib> //Used for exit
-
+#include <algorithm> //Used for random_shuffle
 
 
 //original_priority_flood
@@ -664,6 +664,185 @@ void priority_flood_watersheds(
            <<openc          <<" not in pits."
            <<std::endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+//priority_flood_watersheds_awi
+/**
+  @brief  Modified watersheds code for the ice sheet folks
+  @author Richard Barnes (rbarnes@umn.edu)
+
+    All the edge cells of the DEM are given unique labels. This version of
+    Priority-Flood starts on the edges of the DEM and then works its way
+    inwards using a priority queue to determine the lowest cell which has a
+    path to the edge. The neighbours of this cell are then given its label. All
+    depressions are implicitly filled and digital dams removed. The result is
+    a grid of cells where all cells with a common label drain to a common
+    point.
+
+  @param[in,out] elevations        A grid of cell elevations
+  @param[out]    labels            A grid to hold the watershed labels
+  @param[in]     alter_elevations
+    If true, then **elevations** is altered as though improved_priority_flood()
+    had been applied. The result is that all cells drain to the edges of the
+    DEM. Otherwise, **elevations** is not altered.
+
+  @pre
+    1. **elevations** contains the elevations of every cell or a value _NoData_
+       for cells not part of the DEM. Note that the _NoData_ value is assumed to
+       be a negative number less than any actual data value.
+
+  @post
+    1. **elevations** contains no depressions or digital dams, if
+       **alter_elevations** was set.
+    2. **labels** contains a label for each cell indicating its membership in a
+       given watershed. Cells bearing common labels drain to common points.
+*/
+template<class elev_t>
+void priority_flood_watersheds_awi(
+  Array2D<elev_t> &elevations, Array2D<int32_t> &labels, Array2D<int> &order, bool alter_elevations
+){
+  grid_cellz_pq<elev_t> open;
+  std::queue<grid_cellz<elev_t> > pit;
+  unsigned long processed_cells = 0;
+  unsigned long pitc            = 0;
+  unsigned long openc           = 0;
+
+  //TODO: Thought this was more clear than zero in the results.
+  int clabel=1;  
+  ProgressBar progress;
+
+  order.resize(elevations.viewWidth(),elevations.viewHeight(),0);
+
+  std::cerr<<"\n###Priority-Flood+Watershed Labels for AWI"<<std::endl;
+  std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
+  Array2D<int> closed(elevations.viewWidth(),elevations.viewHeight(),false);
+  std::cerr<<"succeeded."<<std::endl;
+
+  std::cerr<<"Setting up watershed label matrix..."<<std::flush;
+  labels.resize(elevations.viewWidth(),elevations.viewHeight(),-1);
+  labels.setNoData(-1);
+  std::cerr<<"succeeded."<<std::endl;
+
+  std::cerr<<"The priority queue will require approximately "
+           <<(elevations.viewWidth()*2+elevations.viewHeight()*2)*((long)sizeof(grid_cellz<elev_t>))/1024/1024
+           <<"MB of RAM."
+           <<std::endl;
+  std::cerr<<"Adding cells to the priority queue..."<<std::endl;
+
+  std::vector<int> xvs,yvs;
+  for(int x=0;x<elevations.viewWidth();x++)
+    xvs.push_back(x);
+  for(int y=1;y<elevations.viewHeight()-1;y++)
+    yvs.push_back(y);
+
+  //std::random_shuffle(xvs.begin(),xvs.end());
+  //std::random_shuffle(yvs.begin(),yvs.end());
+
+  for(auto &x: xvs){
+    open.push_cell(x,0,elevations(x,0) );
+    open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
+    closed(x,0)=true;
+    closed(x,elevations.viewHeight()-1)=true;
+  }
+  for(auto &y: yvs){
+    std::cerr<<y<<std::endl;
+    open.push_cell(0,y,elevations(0,y)  );
+    open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
+    closed(0,y)=true;
+    closed(elevations.viewWidth()-1,y)=true;
+  }
+  std::cerr<<"succeeded."<<std::endl;
+
+  int my_order = 0;
+
+  std::cerr<<"%%Performing Priority-Flood+Watershed Labels for AWI..."<<std::endl;
+  progress.start( elevations.viewWidth()*elevations.viewHeight() );
+  while(open.size()>0 || pit.size()>0){
+    grid_cellz<elev_t> c;
+    if(pit.size()>0){
+      c=pit.front();
+      pit.pop();
+      pitc++;
+    } else {
+      c=open.top();
+      open.pop();
+      openc++;
+    }
+    processed_cells++;
+
+    order(c.x,c.y) = my_order++;
+
+    //closed(c.x,c.y) = true;
+
+    //Since all interior cells will be flowing into a cell which has already
+    //been processed, the following line identifies only the edge cells of the
+    //DEM. Each edge cell seeds its own watershed/basin. The result of this will
+    //be many small watersheds/basins around the edge of the DEM.
+    if(labels(c.x,c.y)==labels.noData() && elevations(c.x,c.y)!=elevations.noData()){  //Implies a cell without a label which borders the edge of the DEM or a region of no_data
+      labels(c.x,c.y)=clabel++;
+
+      int newthing=true;
+      for(int n=1;n<=8;n++){
+        int nx = c.x+dx[n];
+        int ny = c.y+dy[n];
+        if(!elevations.in_grid(nx,ny))             continue;
+        if(elevations(nx,ny)==elevations.noData()) continue;
+        if(elevations(nx,ny)>elevations(c.x,c.y))  continue;
+        if(labels(nx,ny)==labels.noData())         continue;
+        //At this point the neighbouring cell exists, is lower than us, and has
+        //an associated label. Since it is lower than us and labeled, we take on
+        //its label rather than introducing a new label
+        labels(c.x,c.y) = labels(nx,ny);
+        clabel--;
+        newthing=false;
+        break;
+      }
+
+      if(newthing){
+        std::cerr<<"Seeding new watershed at "<<c.x<<","<<c.y<<" order="<<(my_order-1)<<std::endl;
+      }
+    }
+
+    for(int n=1;n<=8;n++){
+      int nx=c.x+dx[n];
+      int ny=c.y+dy[n];
+      if(!elevations.in_grid(nx,ny)) continue;
+      if(closed(nx,ny))
+        continue;
+
+      //Since the neighbouring cell is not closed, its flow is directed to this
+      //cell. Therefore, it is part of the same watershed/basin as this cell.
+      labels(nx,ny)=labels(c.x,c.y);
+
+      closed(nx,ny)=true;
+      if(elevations(nx,ny)<=c.z){
+        if(alter_elevations)
+          elevations(nx,ny)=c.z;
+        pit.push(grid_cellz<elev_t>(nx,ny,c.z));
+      } else
+        open.push(grid_cellz<elev_t>(nx,ny,elevations(nx,ny)));
+    }
+    progress.update(processed_cells);
+  }
+
+  std::cerr<<"\t\033[96msucceeded in "<<progress.stop()<<"s.\033[39m"<<std::endl;
+
+  std::cerr<<processed_cells<<" cells processed. "
+           <<pitc           <<" in pits, "
+           <<openc          <<" not in pits."
+           <<std::endl;
+}
+
 
 
 

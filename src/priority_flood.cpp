@@ -18,6 +18,8 @@ int PerformAlgorithm(char alg, char *filename, std::string output_prefix){
   Array2D<elev_t>  elevations(filename,0,0,0,0);
   Array2D<int8_t>  flowdirs;
 
+  Array2D<int> order;
+
   std::string output_name;
 
   switch(alg){
@@ -100,6 +102,22 @@ int PerformAlgorithm(char alg, char *filename, std::string output_prefix){
       cout<<"Overall run-time: "<<overall.accumulated()<<endl;
       return 0;
 
+    case '6':
+      algtimer.start();
+      improved_priority_flood(elevations);
+      priority_flood_watersheds_awi(elevations,pit_mask,order,false);
+      algtimer.stop();
+
+      output_name = "-pf-wlabels-awi.tif";
+      output_name = output_prefix+output_name;
+      pit_mask.saveGDAL(output_name,filename,0,0);
+      order.saveGDAL   ("order.tif",filename,0,0);
+      overall.stop();
+
+      cout<<"Algorithm 6: Priority-Flood+Watershed Labels for AWI took ";
+      cout<<algtimer.accumulated()<<"s to run."<<endl;
+      cout<<"Overall run-time: "<<overall.accumulated()<<endl;
+      return 0;
 
     default:
       cerr<<"Unrecognised algorithm choice!"<<endl;
@@ -118,6 +136,7 @@ int main(int argc, char **argv){
     cout<<"\t3: Priority Flood+Epsilon"<<endl;
     cout<<"\t4: Priority Flood+FlowDirs"<<endl;
     cout<<"\t5: Priority Flood+Watershed Labels"<<endl;
+    cout<<"\t6: Priority Flood+Watershed Labels for AWI"<<endl;
 		return -1;
 	}
 
