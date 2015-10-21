@@ -709,7 +709,7 @@ void priority_flood_watersheds(
 */
 template<class elev_t>
 void priority_flood_watersheds_awi(
-  Array2D<elev_t> &elevations, Array2D<int32_t> &labels, Array2D<int> &order, bool alter_elevations
+  Array2D<elev_t> &elevations, Array2D<int32_t> &labels, bool alter_elevations
 ){
   grid_cellz_pq<elev_t> open;
   std::queue<grid_cellz<elev_t> > pit;
@@ -720,8 +720,6 @@ void priority_flood_watersheds_awi(
   //TODO: Thought this was more clear than zero in the results.
   int clabel=1;  
   ProgressBar progress;
-
-  order.resize(elevations.viewWidth(),elevations.viewHeight(),0);
 
   std::cerr<<"\n###Priority-Flood+Watershed Labels for AWI"<<std::endl;
   std::cerr<<"Setting up boolean flood array matrix..."<<std::flush;
@@ -739,31 +737,19 @@ void priority_flood_watersheds_awi(
            <<std::endl;
   std::cerr<<"Adding cells to the priority queue..."<<std::endl;
 
-  std::vector<int> xvs,yvs;
-  for(int x=0;x<elevations.viewWidth();x++)
-    xvs.push_back(x);
-  for(int y=1;y<elevations.viewHeight()-1;y++)
-    yvs.push_back(y);
-
-  //std::random_shuffle(xvs.begin(),xvs.end());
-  //std::random_shuffle(yvs.begin(),yvs.end());
-
-  for(auto &x: xvs){
+  for(int x=0;x<elevations.viewWidth();x++){
     open.push_cell(x,0,elevations(x,0) );
     open.push_cell(x,elevations.viewHeight()-1,elevations(x,elevations.viewHeight()-1) );
     closed(x,0)=true;
     closed(x,elevations.viewHeight()-1)=true;
   }
-  for(auto &y: yvs){
-    std::cerr<<y<<std::endl;
+  for(int y=1;y<elevations.viewHeight()-1;y++){
     open.push_cell(0,y,elevations(0,y)  );
     open.push_cell(elevations.viewWidth()-1,y,elevations(elevations.viewWidth()-1,y) );
     closed(0,y)=true;
     closed(elevations.viewWidth()-1,y)=true;
   }
   std::cerr<<"succeeded."<<std::endl;
-
-  int my_order = 0;
 
   std::cerr<<"%%Performing Priority-Flood+Watershed Labels for AWI..."<<std::endl;
   progress.start( elevations.viewWidth()*elevations.viewHeight() );
@@ -780,10 +766,6 @@ void priority_flood_watersheds_awi(
     }
     processed_cells++;
 
-    order(c.x,c.y) = my_order++;
-
-    //closed(c.x,c.y) = true;
-
     //Since all interior cells will be flowing into a cell which has already
     //been processed, the following line identifies only the edge cells of the
     //DEM. Each edge cell seeds its own watershed/basin. The result of this will
@@ -791,7 +773,6 @@ void priority_flood_watersheds_awi(
     if(labels(c.x,c.y)==labels.noData() && elevations(c.x,c.y)!=elevations.noData()){  //Implies a cell without a label which borders the edge of the DEM or a region of no_data
       labels(c.x,c.y)=clabel++;
 
-      int newthing=true;
       for(int n=1;n<=8;n++){
         int nx = c.x+dx[n];
         int ny = c.y+dy[n];
@@ -803,13 +784,8 @@ void priority_flood_watersheds_awi(
         //an associated label. Since it is lower than us and labeled, we take on
         //its label rather than introducing a new label
         labels(c.x,c.y) = labels(nx,ny);
-        clabel--;
-        newthing=false;
+        clabel--; //Decrement label in order to deal with this situation
         break;
-      }
-
-      if(newthing){
-        std::cerr<<"Seeding new watershed at "<<c.x<<","<<c.y<<" order="<<(my_order-1)<<std::endl;
       }
     }
 

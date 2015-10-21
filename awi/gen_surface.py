@@ -28,13 +28,20 @@ x            = np.linspace(lbound, ubound, npts)
 y            = np.linspace(lbound, ubound, npts)
 xx, yy       = np.meshgrid(x, y)
 z            = np.sin(xx*np.cos(yy))
-zmod         = -(10*yy)**2+1
-zmod[zmod<0] = 0
-z           += zmod
+writeArrayToArcGrid("./sin-x-cos-y.asc", z)
 
 #Show test surface
 if sys.argv[1]=="show":
   plt.contourf(x,y,z)
   plt.show()
 
-writeArrayToArcGrid("./sin-x-cos-y.asc", z)
+#Put stripe of raised elevation down the middle of the DEM generate above
+zmod         = -(10*yy)**2+1
+zmod[zmod<0] = 0
+z           += zmod
+writeArrayToArcGrid("./sin-x-cos-y-divided.asc", z)
+
+#Show test surface
+if sys.argv[1]=="show":
+  plt.contourf(x,y,z)
+  plt.show()
