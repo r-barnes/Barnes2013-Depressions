@@ -103,6 +103,9 @@ implementatations is [here](http://www.cb.uu.se/~cris/priorityqueues.html).
 
 Updates
 =======================
+Commit **31c4e31a6e765f9a** (02016-09-14) updated this repo to rely explicitly
+on the RichDEM codebase.
+
 Commit **51f9a7838d3e88628ef6c74846edd0cb18e7ffe6** (02015-09-25) introduced a
 number of changes to the code versus what was originally published with the
 manuscript. The old codebase uses ASCII-formatted data for input and output; the
