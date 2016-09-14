@@ -1,9 +1,7 @@
-#include "utility.h"
-#include "data_structures.h"
-#include "priority_flood.hpp"
-#include "Array2D.hpp"
+#include "richdem/common/Array2D.hpp"
+#include "richdem/common/timer.hpp"
+#include "richdem/depressions/priority_flood.hpp"
 #include <string>
-#include <sys/time.h>
 #include <iostream>
 #include <cstdint>
 using namespace std;
