@@ -42,6 +42,12 @@ The program is run by typing:
 The algorithms available are described briefly below and in greater detail in
 the manuscript.
 
+Using This As A Tool
+====================
+
+Don't. If you want to use these algorithms as an out-of-the-box terrain analysis
+system, please download [RichDEM](https://github.com/r-barnes/richdem).
+
 The Algorithms
 ==============
 
