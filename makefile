@@ -1,9 +1,8 @@
 CC = g++
-CFLAGS = -O3 -Wall
+CFLAGS = -O3 --std=c++11
 
 default:
-	$(MAKE) --directory=src/
-	mv src/priority_flood.exe ./
+	$(CC) $(CFLAGS) -o priority_flood.exe -O3 `gdal-config --cflags` `gdal-config --libs` priority_flood.cpp -lgdal --std=c++11 -Wall
 
 clean:
-	rm -f priority_flood.exe
+	rm -f *exe
