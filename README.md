@@ -29,6 +29,11 @@ command line. The file may be of any type readable by GDAL. The program will run
 one of the algorithms described in the manuscript (and below), store the result
 in an output file, and report how long this took.
 
+After cloning this repo you must acquire RichDEM by running:
+
+    git submodule init
+    git submodule update
+
 The program is run by typing:
 
     ./priority_flood.exe <ALGORITHM NUMBER> <INPUT DEM> <OUTPUT FILE>
