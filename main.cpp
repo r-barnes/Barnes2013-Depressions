@@ -57,7 +57,7 @@ int PerformAlgorithm(char alg, std::string filename, std::string output_name, st
 
 
     case '4': {
-      Array2D<flowdir_t>  flowdirs;
+      Array2D<d8_flowdir_t>  flowdirs;
       algtimer.start();
       priority_flood_flowdirs(elevations,flowdirs);
       algtimer.stop();
