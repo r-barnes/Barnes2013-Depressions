@@ -17,22 +17,42 @@ for Digital Elevation Models
  * [Journal's GitHub Repository](https://github.com/cageo)
 
 This repository contains a reference implementation of the algorithms presented
-in the manuscript above. These implementations were used in performing the
-tests described in the manuscript.
+in the manuscript above. These implementations were used in performing the tests
+described in the manuscript. The manuscript contains pseudocode for (most of)
+the implementations included here.
 
-The manuscript contains pseudocode for every pseudocode algorithm presented in
-the manuscript. All the code can be compiled simply by running **make**. The
-result is a program called **priority\_flood.exe**.
 
-This program reads in a digital elevation model (DEM) file specified on the
-command line. The file may be of any type readable by GDAL. The program will run
-one of the algorithms described in the manuscript (and below), store the result
-in an output file, and report how long this took.
+
+Using This As A Tool
+====================
+
+Don't. If you want to use these algorithms as an out-of-the-box terrain analysis
+system, please download [RichDEM](https://github.com/r-barnes/richdem).
+
+
+
+The Source Code
+===============
+This repo references the RichDEM terrain analysis softare, of which these
+algorithms are all a part. `main.cpp` will run all of the algorithms mentioned
+above. The `#include` directives in `main.cpp` identify the necessary RichDEM
+libraries for using these implementations for your own work.
+
+
+
+Compilation
+===========
 
 After cloning this repo you must acquire RichDEM by running:
 
     git submodule init
     git submodule update
+
+To compile the programs run:
+
+    make
+
+The result is a program called `priority_flood.exe`.
 
 The program is run by typing:
 
@@ -42,11 +62,26 @@ The program is run by typing:
 The algorithms available are described briefly below and in greater detail in
 the manuscript.
 
-Using This As A Tool
-====================
 
-Don't. If you want to use these algorithms as an out-of-the-box terrain analysis
-system, please download [RichDEM](https://github.com/r-barnes/richdem).
+
+Input
+=====
+
+This program reads in a digital elevation model (DEM) file specified on the
+command line. The file may be of any type recognised by
+[GDAL](http://www.gdal.org/). The program will run one of the algorithms
+described in the manuscript (and below), store the result in an output file, and
+report how long this took.
+
+
+
+Output
+======
+
+The program outputs a digital elevaiton model without any internally-draining
+depressions/pits or digital dams. The output is in GeoTIFF format.
+
+
 
 The Algorithms
 ==============
@@ -93,12 +128,7 @@ according to the following system where 0 indicates the central cell.
     105
     876
 
-The Source Code
-===============
-This repo references the RichDEM terrain analysis softare, of which these
-algorithms are all a part. `main.cpp` will run all of the algorithms mentioned
-above. The `#include` directives in `main.cpp` identify the necessary RichDEM
-libraries for using these implementations for your own work.
+
 
 Assumptions
 =======================
@@ -106,11 +136,15 @@ All of the algorithms assume that cells marked as having NoData will have
 extremely negative numerical values: less than the value of any of the actual
 data. NaN is considered to be less than all values, including negative infinity.
 
+
+
 Notes on the Manuscript
 =======================
 Work by Cris Luengo on the speed of various priority queue algorithms is
 discussed in the manuscript. His website providing code for his
 implementatations is [here](http://www.cb.uu.se/~cris/priorityqueues.html).
+
+
 
 Updates
 =======================
@@ -125,12 +159,9 @@ new codebase uses GDAL to handle many kinds of data.
 The old codebase had the advantage of not relying on external libraries and
 being readily accessible to all parties. It had the disadvantage of being a
 slow, clumsy, and limited way to work with the data. As of 02015-09-25, the code
-requires the use of the GDAL library greatly expanding the data formats and data
+requires the use of the GDAL library, greatly expanding the data formats and data
 types which can be worked with, as well as greatly speeding up I/O.
 
 Note that using the aforementioned **51f9a7838d** directly will result in silent
 casting of your data to the `float` type; commit
 **8b11f535af23368d3bd26609cc88df3dbb7111f1** (02015-09-28) fixes this issue.
-
-Additionally, the library now uses C++ for all streaming operations except the
-progress bar.
